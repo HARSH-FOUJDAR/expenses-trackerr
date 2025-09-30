@@ -1,97 +1,130 @@
-  document.addEventListener("DOMContentLoaded", () => {
-    const expenseForm = document.getElementById("expense-form");
-    const expenseList = document.getElementById("expense-list");
-    const totalAmount = document.getElementById("total-amount");
-    const filterCategory = document.getElementById("filter-category");
+// LocalStorage key
+const STORAGE_KEY = "transactions_v1";
+let transactions = [];
 
-    let expenses = [];
+// DOM Elements
+const form = document.getElementById("transaction-form");
+const typeEl = document.getElementById("transaction-type");
+const nameEl = document.getElementById("transaction-name");
+const amountEl = document.getElementById("transaction-amount");
+const categoryEl = document.getElementById("transaction-category");
+const dateEl = document.getElementById("transaction-date");
+const filterEl = document.getElementById("filter-category");
+const listEl = document.getElementById("transaction-list");
+const incomeEl = document.getElementById("total-income");
+const expenseEl = document.getElementById("total-expense");
+const balanceEl = document.getElementById("balance");
 
-    expenseForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+// Load from localStorage
+function load() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  transactions = data ? JSON.parse(data) : [];
+}
 
-      const name = document.getElementById("expense-name").value;
-      const amount = parseFloat(document.getElementById("expense-amount").value);
-      const category = document.getElementById("expense-category").value;
-      const date = document.getElementById("expense-date").value;
+// Save to localStorage
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+}
 
-      const expense = {
-        id: Date.now(),
-        name,
-        amount,
-        category,
-        date
-      };
+// Generate ID
+function genId() {
+  return Date.now() + Math.floor(Math.random() * 1000);
+}
 
-      expenses.push(expense);
-      displayExpenses(expenses);
-      updateTotalAmount();
+// Add transaction
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-      expenseForm.reset();
-    });
+  const txn = {
+    id: genId(),
+    type: typeEl.value,
+    name: nameEl.value.trim(),
+    amount: parseFloat(amountEl.value),
+    category: categoryEl.value,
+    date: dateEl.value,
+  };
 
-    expenseList.addEventListener("click", (e) => {
-      if (e.target.closest(".delete-btn")) {
-        const id = parseInt(e.target.closest(".delete-btn").dataset.id);
-        expenses = expenses.filter(expense => expense.id !== id);
-        displayExpenses(expenses);
-        updateTotalAmount();
-      }
+  if (!txn.name || !txn.amount || txn.amount <= 0) {
+    alert("Please enter valid details!");
+    return;
+  }
 
-      if (e.target.closest(".edit-btn")) {
-        const id = parseInt(e.target.closest(".edit-btn").dataset.id);
-        const expense = expenses.find(expense => expense.id === id);
+  transactions.push(txn);
+  save();
+  render();
 
-        document.getElementById("expense-name").value = expense.name;
-        document.getElementById("expense-amount").value = expense.amount;
-        document.getElementById("expense-category").value = expense.category;
-        document.getElementById("expense-date").value = expense.date;
+  form.reset();
+});
 
-        expenses = expenses.filter(expense => expense.id !== id);
-        displayExpenses(expenses);
-        updateTotalAmount();
-      }
-    });
+// Delete transaction
+function deleteTxn(id) {
+  transactions = transactions.filter((t) => t.id !== id);
+  save();
+  render();
+}
 
-    filterCategory.addEventListener("change", (e) => {
-      const category = e.target.value;
-      if (category === "All") {
-        displayExpenses(expenses);
-      } else {
-        const filteredExpenses = expenses.filter(expense => expense.category === category);
-        displayExpenses(filteredExpenses);
-      }
-    });
+// Edit transaction
+function editTxn(id) {
+  const txn = transactions.find((t) => t.id === id);
+  if (!txn) return;
 
-    function displayExpenses(expenses) {
-      expenseList.innerHTML = "";
-      expenses.forEach(expense => {
-        const row = document.createElement("tr");
+  const newName = prompt("Edit Name:", txn.name);
+  const newAmount = prompt("Edit Amount:", txn.amount);
+  if (newName && newAmount && !isNaN(newAmount)) {
+    txn.name = newName;
+    txn.amount = parseFloat(newAmount);
+    save();
+    render();
+  }
+}
 
-        row.innerHTML = `
-          <td class="p-3 border-b text-gray-700">${expense.name}</td>
-          <td class="p-3 border-b text-gray-700">$${expense.amount.toFixed(2)}</td>
-          <td class="p-3 border-b text-gray-700">${expense.category}</td>
-          <td class="p-3 border-b text-gray-700">${expense.date}</td>
-          <td class="p-3 border-b flex gap-2 justify-center">
-            <button 
-              class="edit-btn bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-3 py-1 rounded-lg text-sm font-semibold shadow-sm transition flex items-center gap-1"
-              data-id="${expense.id}">
-              <i class="fa-solid fa-pen"></i> Edit
-            </button>
-            <button 
-              class="delete-btn bg-red-500  hover:bg-red-600 text-white cursor-pointer px-3 py-1 rounded-lg text-sm font-semibold shadow-sm transition flex items-center gap-1"
-              data-id="${expense.id}">
-              <i class="fa-solid fa-trash"></i> Delete
-            </button>
-          </td>
-        `;
+// Render function
+function render() {
+  listEl.innerHTML = "";
 
-        expenseList.appendChild(row);
-      });
-    }
+  const filter = filterEl.value;
+  let filtered = transactions;
+  if (filter !== "All") {
+    filtered = transactions.filter((t) => t.category === filter);
+  }
 
-    function updateTotalAmount() {
-      const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-      totalAmount.textContent = total.toFixed(2);
-    }
+  filtered.forEach((txn) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td class="p-3 border-b text-${txn.type === "income" ? "green" : "red"}-600 font-bold">${txn.type}</td>
+      <td class="p-3 border-b">${txn.name}</td>
+      <td class="p-3 border-b">$${txn.amount.toFixed(2)}</td>
+      <td class="p-3 border-b">${txn.category}</td>
+      <td class="p-3 border-b">${txn.date}</td>
+      <td class="p-3 border-b">
+        <button onclick="editTxn(${txn.id})" class="text-blue-600 hover:underline mr-2">Edit</button>
+        <button onclick="deleteTxn(${txn.id})" class="text-red-600 hover:underline">Delete</button>
+      </td>
+    `;
+    listEl.appendChild(row);
   });
+
+  // Totals
+  const income = transactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const expense = transactions
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  incomeEl.textContent = income.toFixed(2);
+  expenseEl.textContent = expense.toFixed(2);
+  balanceEl.textContent = (income - expense).toFixed(2);
+}
+
+// Filter change
+filterEl.addEventListener("change", render);
+
+// Init
+load();
+render();
+
+// expose globally
+window.deleteTxn = deleteTxn;
+window.editTxn = editTxn;

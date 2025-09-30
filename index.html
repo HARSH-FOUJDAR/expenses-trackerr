@@ -1,17 +1,20 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
     integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-  </head>
+</head>
+
 <body class="flex flex-col min-h-screen bg-gray-100">
 
   <!-- Navbar -->
-  <nav class="w-full bg-gradient-to-r from-[#29007a] to-[#6220e7] text-white px-12 py-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
+  <nav
+    class="w-full bg-gradient-to-r from-[#29007a] to-[#6220e7] text-white px-12 py-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
     <div class="text-lg font-bold tracking-wide">EXPENSE TRACKER</div>
     <ul class="flex gap-12">
       <li class="cursor-pointer text-base hover:text-yellow-400 transition">Home</li>
@@ -19,7 +22,8 @@
       <li class="cursor-pointer text-base hover:text-yellow-400 transition">About</li>
     </ul>
     <div>
-      <button class="p-3 bg-yellow-400 text-[#29007a] cursor-pointer font-semibold rounded-lg hover:bg-yellow-300 transition">
+      <button
+        class="p-3 bg-yellow-400 text-[#29007a] cursor-pointer font-semibold rounded-lg hover:bg-yellow-300 transition">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
     </div>
@@ -27,38 +31,46 @@
 
   <!-- Center Container -->
   <div class="flex-grow flex items-center justify-center px-4">
-    <div class="max-w-5xl w-full bg-white/90 rounded-2xl p-8 shadow-2xl backdrop-blur-md animate-fadeIn">
-      
+    <div class="max-w-6xl w-full bg-white/90 rounded-2xl p-8 shadow-2xl backdrop-blur-md animate-fadeIn">
+
       <!-- Title -->
-      <h1 class="text-center mb-6 text-3xl font-bold text-[#29007a] drop-shadow">Expense Tracker</h1>
+      <h1 class="text-center mb-6 text-3xl font-bold text-[#29007a] drop-shadow">Income & Expense Tracker</h1>
 
       <!-- Form -->
-      <form id="expense-form" class="grid gap-4 w-3/5 mx-auto p-6">
-        <input type="text" id="expense-name" placeholder="Expense Name" required 
-               class="p-3 border rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]" />
-        <input type="number" id="expense-amount" placeholder="Amount" required 
-               class="p-3 border rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]" />
-        <select id="expense-category" required 
-                class="p-3 border cursor-pointer rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]">
+      <form id="transaction-form" class="grid gap-4 w-3/5 mx-auto p-6">
+        <select id="transaction-type" required
+          class="p-3 border cursor-pointer rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]">
+          <option value="" disabled selected>Select Type</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <input type="text" id="transaction-name" placeholder="Name" required
+          class="p-3 border rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]" />
+        <input type="number" id="transaction-amount" placeholder="Amount" required
+          class="p-3 border rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]" />
+        <select id="transaction-category" required
+          class="p-3 border cursor-pointer rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]">
           <option value="" disabled selected>Select Category</option>
+          <option value="Salary">Salary</option>
           <option value="Food">Food</option>
           <option value="Transport">Transport</option>
           <option value="Entertainment">Entertainment</option>
           <option value="Other">Other</option>
         </select>
-        <input type="date" id="expense-date" required 
-               class="p-3 border rounded-xl cursor-pointer text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]" />
-        <button type="submit" 
-                class="bg-gradient-to-r from-[#6220e7] to-[#4b0082] text-white font-semibold py-3 rounded-full hover:from-[#4b0082] hover:to-[#29007a] transition transform hover:scale-105">
-          <i class="fa-solid fa-plus"></i> Add Expense
+        <input type="date" id="transaction-date" required
+          class="p-3 border rounded-xl cursor-pointer text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]" />
+        <button type="submit"
+          class="bg-gradient-to-r from-[#6220e7] to-[#4b0082] text-white font-semibold py-3 rounded-full hover:from-[#4b0082] hover:to-[#29007a] transition transform hover:scale-105">
+          <i class="fa-solid fa-plus"></i> Add Transaction
         </button>
       </form>
 
       <!-- Filter Dropdown -->
-      <div class="flex  relative mt-4">
-        <select id="filter-category" 
-                class="p-3 border rounded-xl text-sm  shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]">
+      <div class="flex relative mt-4">
+        <select id="filter-category"
+          class="p-3 border rounded-xl text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-[#6220e7]">
           <option value="All">All</option>
+          <option value="Salary">Salary</option>
           <option value="Food">Food</option>
           <option value="Transport">Transport</option>
           <option value="Entertainment">Entertainment</option>
@@ -66,24 +78,33 @@
         </select>
       </div>
 
-      <!-- Total -->
-      <div class="p-4 text-right text-xl font-bold text-[#29007a] bg-gray-50 rounded-lg shadow-inner mt-6">
-        <strong>Total:</strong> $<span id="total-amount">0</span>
-      </div>
+      <!-- Totals -->
+     <div class="grid grid-cols-3 gap-4 mt-6">
+  <div class="p-4 text-center text-lg font-bold text-green-600 bg-gray-50 rounded-lg shadow-inner">
+    Income: ₹<span id="total-income">0</span>
+  </div>
+  <div class="p-4 text-center text-lg font-bold text-red-600 bg-gray-50 rounded-lg shadow-inner">
+    Expense: ₹<span id="total-expense">0</span>
+  </div>
+  <div class="p-4 text-center text-lg font-bold text-[#29007a] bg-gray-50 rounded-lg shadow-inner">
+    Balance: ₹<span id="balance">0</span>
+  </div>
+</div>
 
       <!-- Table -->
       <div class="mt-6 overflow-x-auto rounded-2xl border shadow-md">
         <table class="w-full border-collapse">
           <thead>
             <tr class="bg-gradient-to-r from-gray-100 to-gray-50 text-[#29007a] font-bold">
-              <th class="p-3 border-b">Expense Name</th>
+              <th class="p-3 border-b">Type</th>
+              <th class="p-3 border-b">Name</th>
               <th class="p-3 border-b">Amount</th>
               <th class="p-3 border-b">Category</th>
               <th class="p-3 border-b">Date</th>
               <th class="p-3 border-b">Action</th>
             </tr>
           </thead>
-          <tbody id="expense-list"></tbody>
+          <tbody id="transaction-list"></tbody>
         </table>
       </div>
     </div>
@@ -92,13 +113,22 @@
   <!-- Animations -->
   <style>
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     .animate-fadeIn {
       animation: fadeIn 0.8s ease-in-out;
     }
   </style>
-      <script src="./java.js"></script>
-  </body>
+  <script src="./java.js"></script>
+</body>
+
 </html>
